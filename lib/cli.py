@@ -3,7 +3,7 @@ from lib.skelly_bye import skelly_bye
 from time import sleep
 from lib.models.models import User
 # , Directive
-import ipdb
+
 
 
 class App:
@@ -20,7 +20,7 @@ class App:
 
     def main_menu(self):
         main_menu_opts = """
-        1. Manage User Profile
+        1. Manage User Profiles
         2. Set Up Advanced Directives 
         3. Organize Emergency Funds
         4. Handle Digital Legacy
@@ -65,19 +65,20 @@ class App:
     def manage_user(self):
         user_menu_opts = """
         1. Create New Profile
-        2. Delete Profiles
-        3. View All Profiles
-        4. Return to Main Menu
+        2. View All Profiles
+        3. Return to Main Menu
         """
         print(user_menu_opts)
         self.input = None
 
-        while self.input not in ["1", "2", "3", "4"]:
+        while self.input not in ["1", "2", "3"]:
             self.input = input(">>> ")
 
             if self.input == "1":
                 self.new_profile()
-            elif self.input == "4":
+            elif self.input == "2":
+                self.view_profile()
+            elif self.input == "3":
                 self.return_main()
             else:
                 print("Please choose a number based on the menu options")   
@@ -190,10 +191,62 @@ class App:
         new_user.save()
 
         print(f"A profile has been created for {first_name} {last_name}! You can now create and link Advanced Directives to {first_name}. YAY!")
+        sleep(3)
+        print("\nReturning to User Profile Menu...")
         
         self.input = None
-
-        print(" ")
-        sleep(3)
+        sleep(1)
         self.manage_user()
+
+    def print_user_list(self):
+        user_list = User.get_all()
+        index = 1
+        for user in user_list:
+            print(f"{index}. {user.first_name} {user.last_name}")
+            index += 1
+        return user_list
+
+    def view_profile(self):
+        self.print_user_list()
+        print("\nReturn [r]")
+        print("\n Enter a list number to delete that user's profile or 'r' to return:")
+
+        user_list = User.get_all()
+
+        while True: 
+            user_choice = input(">>> ")
+            if user_choice == "r":
+                print("Ok! Returning to User Profile Menu...")
+                sleep(1)
+                self.manage_user()
+                False
+            
+            try:
+                user_choice = int(user_choice)
+                if user_choice in range(1, len(user_list) + 1):
+                    chosen_profile = user_list[user_choice - 1]
+                    print(f"Do you want to delete {chosen_profile.first_name} {chosen_profile.last_name}'s profile?")
+                    print("Yes [y] or No [n]")
+                    
+                    confirmation_input = input(">>> ").lower()
+                    if confirmation_input == "y":
+                        chosen_profile.destroy()
+                        print("Profile successfully deleted. Returning to User Profiles List ... \n")
+                        sleep(2)
+                        self.print_user_list()
+                        print("\nReturn [r]")
+                        False 
+                    
+                    elif confirmation_input == "n":
+                        print("Ok! Returning to User Profiles list...\n")
+                        sleep(2)
+                        self.print_user_list()
+                        print("\nReturn [r]")
+                        False
+                    else:
+                        print("Invalid entry, try again!")
+                else:
+                    print("Invalid choice, please select a number from the list.")
+            except:
+                print("Invalid entry. Please enter a valid number or 'r' to go back.")
         
