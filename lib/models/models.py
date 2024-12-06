@@ -45,6 +45,13 @@ class User:
 
         return user_instances
     
+#for debugging purposes
+    @classmethod
+    def drop_table(cls):
+        sql = f"DROP TABLE IF EXISTS users"
+        CONN.execute(sql)
+        CONN.commit()
+    
 # CRUD METHODS
     def create(self):
         sql = """
@@ -95,22 +102,22 @@ class User:
         self.id = None
 
 #JOIN METHODS USER CLASS
-    # def reviews(self):
-    #     sql = """
-    #     SELECT * FROM reviews
-    #     WHERE book_id = ?
-    #     """
+    def directives(self):
+        sql = """
+        SELECT * FROM directives
+        WHERE directive_owner = ?
+        """
 
-    #     review_tuples = CURSOR.execute(sql, [self.id]).fetchall()
+        directive_tuples = CURSOR.execute(sql, [self.id]).fetchall()
 
-    #     review_instances = [ Review(
-    #         id=rv[0], 
-    #         stars=rv[1], 
-    #         username=rv[2], 
-    #         book_id=rv[3]
-    #     ) for rv in review_tuples ]
+        directive_instances = [ Directive(
+            id=d[0], 
+            location=d[1], 
+            directive_owner=d[2], 
+            proxy=d[3]
+        ) for d in directive_tuples ]
 
-    #     return review_instances
+        return directive_instances
 
 
 class Directive:
@@ -162,8 +169,8 @@ class Directive:
         CONN.commit()
 
         last_row_sql = """
-        SELECTE id FROM directives
-        ORDER by DESC
+        SELECT id FROM directives
+        ORDER by id DESC
         LIMIT 1
         """
 
@@ -199,5 +206,5 @@ class Directive:
         self.id = None
 
 # JOIN METHODS DIRECTIVE CLASS 
-    # def book(self):
-    #     return Book.get_by_id(self.book_id)
+    def user(self):
+        return User.get_by_id(self.directive_owner)

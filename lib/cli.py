@@ -98,6 +98,8 @@ class App:
 
             if self.input == "1":
                 self.create_directive()
+                sleep(2)
+                self.advanced_directive_setup()
             elif self.input == "4":
                 self.return_main()
             else:
@@ -175,7 +177,7 @@ class App:
         while not self.input or not (3 <= len(self.input) <= 20):
             self.input = input(">>> ")
             if self.input or not (3 <= len(self.input) <= 20): 
-                first_name = self.input
+                first_name = self.input.strip()
             else:
                 print ("Invalid input...")
 
@@ -184,7 +186,7 @@ class App:
         while not self.input or not (2 <= len(self.input) <= 20):
             self.input = input (f">>> {first_name} ")
             if not self.input == (f">>> {first_name} ") or not (3 <= len(self.input) <= 30): 
-                last_name = self.input 
+                last_name = self.input.strip()
             else: 
                 print ("Invalid input...")
         
@@ -253,36 +255,43 @@ class App:
 
 #DIRECTIVE FUNCTIONS 
     def create_directive(self):
-        pass
-        # print("Select a user to create an advanced directive for:") 
-        # self.print_user_list()
-        # user_list = User.get_all()
-
-        # while True:
-        #     try:
-        #         user_choice = int(input(">>> "))
-        #         if 1 <= user_choice <= len(user_list):
-        #             directive_owner = user_list[user_choice - 1].id
-        #             break
-        #         else:
-        #             print("Invalid choice. Please select a number from the list.")
-        #     except:
-        #         print("Invalid input. Please enter a valid number.")
-    
-        # while True:
-        #     location = input("Enter the directive owner's state of residence: ").strip()
-        #     if location:
-        #         break
-        #     else:
-        #         print("State of residence cannot be empty. Please try again.")
-    
-        # new_directive = Directive(location=location, directive_owner=directive_owner, proxy=None) 
-        # new_directive.save()
+        print("Select a user to create an advanced directive for:\n") 
         
-        # print(f"Advanced directive template created for user ID {directive_owner} with state of residence '{location}'.")
+        self.input = None
+        
+        self.print_user_list()
+        user_list = User.get_all()
+
+        while True:
+            try:
+                user_choice = int(input(">>> "))
+                if 1 <= user_choice <= len(user_list):
+                    directive_owner = user_list[user_choice - 1].id
+                    break
+                else:
+                    print("Invalid choice. Please select a number from the list.")
+            except:
+                print("Invalid input. Please enter a valid number.")
     
+        while True:
+            location = input("Enter the directive owner's state of residence: ").strip()
+            if location:
+                break
+            else:
+                print("State of residence cannot be empty. Please try again.")
+    
+        new_directive = Directive(location=location, directive_owner=directive_owner, proxy=None) 
+        new_directive.save()
+        
+        print(f"Advanced directive search template created for User ID {directive_owner} with state of residence '{location}'.")
+    
+
+#IMMEDIATE NEEDS
+# finish building out advanced directive menu 
+# finish building out task overview menu
 
 #FUTURE FEATURES
 # create ability to edit user profile 
 # create ability to edit advanced directive search 
 # create ability to add proxy by selecting from user list and create new user profile if the desired proxy's profile does not already exist
+# validate that location entry is valid US state?
