@@ -1,15 +1,14 @@
 from lib.skelly_hi import skelly_hi
 from lib.skelly_bye import skelly_bye
 from time import sleep
-from lib.models.models import User
-# , Directive
+from lib.models.models import User, Directive
 
 
 
 class App:
     def __init__(self):
         User.create_table()
-        # Review.create_table()
+        Directive.create_table()
         self.input = None
     
     def run(self):
@@ -85,9 +84,9 @@ class App:
         
     def advanced_directive_setup(self):
         advanced_directive_opts = """
-        1. Create New Directive
-        2. Delete Directive
-        3. View All Directives
+        1. Create New Directive Search Template
+        2. Search for an Advanced Directive
+        3. Delete Advanced Directive
         4. Return to Main Menu
         """
         print(advanced_directive_opts)
@@ -97,7 +96,9 @@ class App:
 
             self.input = input(">>> ")
 
-            if self.input == "4":
+            if self.input == "1":
+                self.create_directive()
+            elif self.input == "4":
                 self.return_main()
             else:
                 print("Please choose a number based on the menu options")          
@@ -191,11 +192,10 @@ class App:
         new_user.save()
 
         print(f"A profile has been created for {first_name} {last_name}! You can now create and link Advanced Directives to {first_name}. YAY!")
-        sleep(3)
         print("\nReturning to User Profile Menu...")
         
         self.input = None
-        sleep(1)
+        sleep(3)
         self.manage_user()
 
     def print_user_list(self):
@@ -208,8 +208,7 @@ class App:
 
     def view_profile(self):
         self.print_user_list()
-        print("\nReturn [r]")
-        print("\n Enter a list number to delete that user's profile or 'r' to return:")
+        print("\nEnter a list number to delete that user's profile or 'r' to return")
 
         user_list = User.get_all()
 
@@ -225,7 +224,7 @@ class App:
                 user_choice = int(user_choice)
                 if user_choice in range(1, len(user_list) + 1):
                     chosen_profile = user_list[user_choice - 1]
-                    print(f"Do you want to delete {chosen_profile.first_name} {chosen_profile.last_name}'s profile?")
+                    print(f"\nDo you want to delete {chosen_profile.first_name} {chosen_profile.last_name}'s profile?")
                     print("Yes [y] or No [n]")
                     
                     confirmation_input = input(">>> ").lower()
@@ -235,6 +234,7 @@ class App:
                         sleep(2)
                         self.print_user_list()
                         print("\nReturn [r]")
+                        print("or delete another user")
                         False 
                     
                     elif confirmation_input == "n":
@@ -242,6 +242,7 @@ class App:
                         sleep(2)
                         self.print_user_list()
                         print("\nReturn [r]")
+                        print("or delete a different user")
                         False
                     else:
                         print("Invalid entry, try again!")
@@ -249,4 +250,39 @@ class App:
                     print("Invalid choice, please select a number from the list.")
             except:
                 print("Invalid entry. Please enter a valid number or 'r' to go back.")
+
+#DIRECTIVE FUNCTIONS 
+    def create_directive(self):
+        pass
+        # print("Select a user to create an advanced directive for:") 
+        # self.print_user_list()
+        # user_list = User.get_all()
+
+        # while True:
+        #     try:
+        #         user_choice = int(input(">>> "))
+        #         if 1 <= user_choice <= len(user_list):
+        #             directive_owner = user_list[user_choice - 1].id
+        #             break
+        #         else:
+        #             print("Invalid choice. Please select a number from the list.")
+        #     except:
+        #         print("Invalid input. Please enter a valid number.")
+    
+        # while True:
+        #     location = input("Enter the directive owner's state of residence: ").strip()
+        #     if location:
+        #         break
+        #     else:
+        #         print("State of residence cannot be empty. Please try again.")
+    
+        # new_directive = Directive(location=location, directive_owner=directive_owner, proxy=None) 
+        # new_directive.save()
         
+        # print(f"Advanced directive template created for user ID {directive_owner} with state of residence '{location}'.")
+    
+
+#FUTURE FEATURES
+# create ability to edit user profile 
+# create ability to edit advanced directive search 
+# create ability to add proxy by selecting from user list and create new user profile if the desired proxy's profile does not already exist
